@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\BillController;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\ResidentController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -21,6 +22,9 @@ Route::delete('/auth', [LoginController::class, 'logout']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('bill/{bill}', [BillController::class, 'find']);
+
+    Route::get('/resident/me', [ResidentController::class, 'showMe']);
+    Route::apiResource('/resident', ResidentController::class);
 
     Route::get('/user', function (Request $request) {
         return $request->user();

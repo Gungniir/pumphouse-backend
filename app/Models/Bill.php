@@ -30,6 +30,13 @@ class Bill extends Model
 {
     use HasFactory;
 
+    /**
+     * Indicates if the model should be timestamped.
+     *
+     * @var bool
+     */
+    public $timestamps = false;
+
     public function resident(): BelongsTo
     {
         return $this->belongsTo(Resident::class);

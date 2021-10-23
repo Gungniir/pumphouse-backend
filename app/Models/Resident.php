@@ -29,6 +29,13 @@ class Resident extends Model
 {
     use HasFactory;
 
+    /**
+     * Indicates if the model should be timestamped.
+     *
+     * @var bool
+     */
+    public $timestamps = false;
+
     public function user(): HasOne
     {
         return $this->hasOne(User::class);

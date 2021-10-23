@@ -27,6 +27,13 @@ class PumpMeterRecord extends Model
 {
     use HasFactory;
 
+    /**
+     * Indicates if the model should be timestamped.
+     *
+     * @var bool
+     */
+    public $timestamps = false;
+
     public function period(): BelongsTo
     {
         return $this->belongsTo(Period::class);
