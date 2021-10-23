@@ -2,8 +2,9 @@
 
 namespace App\Providers;
 
+use App\Models\Bill;
+use App\Policies\BillPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
-use Illuminate\Support\Facades\Gate;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -13,7 +14,7 @@ class AuthServiceProvider extends ServiceProvider
      * @var array
      */
     protected $policies = [
-        // 'App\Models\Model' => 'App\Policies\ModelPolicy',
+        Bill::class => BillPolicy::class,
     ];
 
     /**

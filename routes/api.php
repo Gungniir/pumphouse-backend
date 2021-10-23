@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\BillController;
 use App\Http\Controllers\LoginController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -16,11 +17,14 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::post('/auth', [LoginController::class, 'authenticate']);
+Route::delete('/auth', [LoginController::class, 'logout']);
 
-Route::middleware('auth:sanctum')->delete('/auth', [LoginController::class, 'logout']);
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('bill/{bill}', [BillController::class, 'find']);
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+    Route::get('/user', function (Request $request) {
+        return $request->user();
+    });
 });
 
 Route::get('/ping', function () {
