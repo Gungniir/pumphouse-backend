@@ -3,6 +3,7 @@
 use App\Http\Controllers\BillController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\PeriodController;
+use App\Http\Controllers\PumpMeterRecordController;
 use App\Http\Controllers\ResidentController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -28,6 +29,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('/bill', BillController::class);
 
     Route::apiResource('/period', PeriodController::class)->only(['index', 'show']);
+
+    Route::apiResource('/pump-meter-record', PumpMeterRecordController::class);
 
     Route::get('/user', function (Request $request) {
         return $request->user();
