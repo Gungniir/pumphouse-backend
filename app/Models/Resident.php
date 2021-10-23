@@ -23,6 +23,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @method static Builder|Resident whereId($value)
  * @method static Builder|Resident whereStartDate($value)
  * @mixin Eloquent
+ * @property-read User|null $user
  */
 class Resident extends Model
 {

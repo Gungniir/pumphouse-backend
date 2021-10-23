@@ -21,6 +21,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static Builder|PumpMeterRecord whereId($value)
  * @method static Builder|PumpMeterRecord wherePeriodId($value)
  * @mixin Eloquent
+ * @property-read Period $period
  */
 class PumpMeterRecord extends Model
 {

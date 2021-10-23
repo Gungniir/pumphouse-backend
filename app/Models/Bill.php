@@ -23,6 +23,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static Builder|Bill whereId($value)
  * @method static Builder|Bill wherePeriodId($value)
  * @method static Builder|Bill whereResidentId($value)
+ * @property-read Period $period
+ * @property-read Resident $resident
  */
 class Bill extends Model
 {

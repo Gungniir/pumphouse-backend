@@ -22,6 +22,9 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @method static Builder|Period whereEndDate($value)
  * @method static Builder|Period whereId($value)
  * @mixin Eloquent
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Bill[] $bills
+ * @property-read int|null $bills_count
+ * @property-read \App\Models\PumpMeterRecord|null $pumpMeterRecord
  */
 class Period extends Model
 {

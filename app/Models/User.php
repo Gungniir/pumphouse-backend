@@ -47,6 +47,7 @@ use Laravel\Sanctum\PersonalAccessToken;
  * @mixin Eloquent
  * @property int|null $resident_id
  * @method static Builder|User whereResidentId($value)
+ * @property-read Resident|null $resident
  */
 class User extends Authenticatable
 {
