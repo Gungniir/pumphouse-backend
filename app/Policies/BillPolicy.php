@@ -4,7 +4,6 @@ namespace App\Policies;
 
 use App\Models\Bill;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class BillPolicy
@@ -15,22 +14,84 @@ class BillPolicy
      * Perform pre-authorization checks.
      *
      * @param User $user
-     * @param string $ability
      * @return void|bool
      */
-    public function before(User $user, string $ability)
+    public function before(User $user)
     {
         if ($user->login === config('admin.login')) {
             return true;
         }
     }
 
-    public function view(User $user, Bill $bill)
+    /**
+     * Determine whether the user can view all models.
+     *
+     * @return bool
+     */
+    public function viewAny(): bool
     {
-        if (is_null($user->resident)) {
-            return Response::deny("You are not a resident");
-        }
+        return false;
+    }
 
-        return $user->resident->id === $bill->resident_id;
+    /**
+     * Determine whether the user can view the model.
+     *
+     * @param User $user
+     * @param Bill $bill
+     * @return bool
+     */
+    public function view(User $user, Bill $bill): bool
+    {
+        return $user->resident_id === $bill->resident_id;
+    }
+
+    /**
+     * Determine whether the user can create models.
+     *
+     * @return bool
+     */
+    public function create(): bool
+    {
+        return false;
+    }
+
+    /**
+     * Determine whether the user can update the model.
+     *
+     * @return bool
+     */
+    public function update(): bool
+    {
+        return false;
+    }
+
+    /**
+     * Determine whether the user can delete the model.
+     *
+     * @return bool
+     */
+    public function delete(): bool
+    {
+        return false;
+    }
+
+    /**
+     * Determine whether the user can restore the model.
+     *
+     * @return bool
+     */
+    public function restore(): bool
+    {
+        return false;
+    }
+
+    /**
+     * Determine whether the user can permanently delete the model.
+     *
+     * @return bool
+     */
+    public function forceDelete(): bool
+    {
+        return false;
     }
 }

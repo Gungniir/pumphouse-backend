@@ -21,10 +21,10 @@ Route::post('/auth', [LoginController::class, 'authenticate']);
 Route::delete('/auth', [LoginController::class, 'logout']);
 
 Route::middleware('auth:sanctum')->group(function () {
-    Route::get('bill/{bill}', [BillController::class, 'find']);
-
     Route::get('/resident/me', [ResidentController::class, 'showMe']);
     Route::apiResource('/resident', ResidentController::class);
+
+    Route::apiResource('/bill', BillController::class);
 
     Route::get('/user', function (Request $request) {
         return $request->user();
