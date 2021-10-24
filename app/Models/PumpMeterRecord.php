@@ -27,6 +27,8 @@ class PumpMeterRecord extends Model
 {
     use HasFactory;
 
+    protected $fillable = ['id', 'period_id', 'amount_volume'];
+
     /**
      * Indicates if the model should be timestamped.
      *

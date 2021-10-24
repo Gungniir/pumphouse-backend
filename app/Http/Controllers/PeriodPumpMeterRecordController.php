@@ -4,32 +4,43 @@ namespace App\Http\Controllers;
 
 use App\Models\Period;
 use App\Models\PumpMeterRecord;
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Throwable;
+use Illuminate\Support\Facades\Response;
 
-class PumpMeterRecordController extends Controller
+class PeriodPumpMeterRecordController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
-     * @return Collection|PumpMeterRecord[]
+     * @param Period $period
+     * @return PumpMeterRecord
      */
-    public function index()
+    public function index(Period $period): PumpMeterRecord
     {
-        return PumpMeterRecord::all();
+        return $period->pumpMeterRecord;
     }
 
     /**
-     * Display the specified resource.
+     * Store a newly created resource in storage.
      *
-     * @param PumpMeterRecord $pumpMeterRecord
-     * @return PumpMeterRecord
+     * @param Request $request
+     * @param Period $period
+     * @return JsonResponse
      */
-    public function show(PumpMeterRecord $pumpMeterRecord): PumpMeterRecord
+    public function store(Request $request, Period $period): JsonResponse
     {
-        return $pumpMeterRecord;
+        $request->validate([
+            'amount_volume' => 'required|numeric',
+        ]);
+
+        if ($period->hasOne(PumpMeterRecord::class)) {
+            return Response::json('Record is already set', 409); // Conflict
+        }
+
+        return Response::json($period->pumpMeterRecord()->save(
+            new PumpMeterRecord(['amount_volume' => $request->input('amount_volume')])
+        ));
     }
 
     /**
@@ -38,7 +49,6 @@ class PumpMeterRecordController extends Controller
      * @param Request $request
      * @param PumpMeterRecord $pumpMeterRecord
      * @return string
-     * @throws Throwable
      */
     public function update(Request $request, PumpMeterRecord $pumpMeterRecord): string
     {

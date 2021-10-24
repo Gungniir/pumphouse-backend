@@ -1,17 +1,12 @@
 <?php
-/** @noinspection PhpUnhandledExceptionInspection */
-
-/** @noinspection PhpMissingReturnTypeInspection */
 
 namespace App\Http\Controllers;
 
 use App\Models\Bill;
-use App\Models\Resident;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
-use Throwable;
 
-class BillController extends Controller
+class PeriodBillController extends Controller
 {
     /**
      * Create the controller instance.
@@ -35,7 +30,7 @@ class BillController extends Controller
      * Store a newly created resource in storage.
      *
      * @param Request $request
-     * @return Model|Resident
+     * @return Model|Bill
      */
     public function store(Request $request)
     {
@@ -45,7 +40,7 @@ class BillController extends Controller
             'amount_rub' => 'required|numeric',
         ]);
 
-        return Resident::create([
+        return Bill::create([
             'resident_id' => $request->input('resident_id'),
             'period_id' => $request->input('period_id'),
             'amount_rub' => $request->input('amount_rub'),
@@ -69,7 +64,6 @@ class BillController extends Controller
      * @param Request $request
      * @param Bill $bill
      * @return bool
-     * @throws Throwable
      */
     public function update(Request $request, Bill $bill): bool
     {
