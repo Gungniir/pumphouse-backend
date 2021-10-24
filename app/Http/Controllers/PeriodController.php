@@ -45,7 +45,7 @@ class PeriodController extends Controller
             return Response::json('You must put record first', 400); // Bad request
         }
 
-        if ($period->bills_count > 0) {
+        if (count($period->bills) > 0) {
             return Response::json('Bills is already generated', 409); // Conflict
         }
 
