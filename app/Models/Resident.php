@@ -29,6 +29,8 @@ class Resident extends Model
 {
     use HasFactory;
 
+    protected $fillable = ['fio', 'area', 'start_date'];
+
     /**
      * Indicates if the model should be timestamped.
      *

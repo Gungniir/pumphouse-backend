@@ -2,11 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\ResidentCollection;
+use App\Http\Resources\ResidentResource;
 use App\Models\Resident;
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Response;
 use Throwable;
 
 class ResidentController extends Controller
@@ -24,20 +30,20 @@ class ResidentController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return Collection|Resident[]
+     * @return ResidentCollection
      */
-    public function index()
+    public function index(): ResidentCollection
     {
-        return Resident::all();
+        return new ResidentCollection(Resident::all());
     }
 
     /**
      * Store a newly created resource in storage.
      *
      * @param Request $request
-     * @return Model|Resident
+     * @return ResidentResource
      */
-    public function store(Request $request)
+    public function store(Request $request): ResidentResource
     {
         $request->validate([
             'fio' => 'required',
@@ -45,36 +51,34 @@ class ResidentController extends Controller
             'start_date' => 'required|date_format:Y.m.d H:i:s',
         ]);
 
-        return Resident::create([
+        return new ResidentResource(Resident::create([
             'fio' => $request->input('fio'),
-            'area' => $request->input('area'),
+            'area' => number_format($request->input('area'), 2),
             'start_date' => $request->input('start_date'),
-        ]);
+        ]));
     }
 
     /**
      * Display the specified resource.
      *
      * @param Resident $resident
-     * @return Resident
+     * @return ResidentResource
      */
-    public function show(Resident $resident): Resident
+    public function show(Resident $resident): ResidentResource
     {
-        return $resident;
+        return new ResidentResource($resident);
     }
 
     /**
      * Display the specified resource.
-     *
-     * @return Resident|mixed|null
      */
     public function showMe()
     {
         if (is_null(Auth::user()->resident)) {
-            return \response('You are not a resident', 404);
+            return Response::json('You are not a resident', 404);
         }
 
-        return Auth::user()->resident;
+        return new ResidentResource(Auth::user()->resident);
     }
 
     /**
