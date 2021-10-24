@@ -28,13 +28,10 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::apiResource('/bill', BillController::class);
 
+    Route::post('/period/{period}/calculate', [PeriodController::class, 'calculate']);
     Route::apiResource('/period', PeriodController::class)->only(['index', 'show']);
 
     Route::apiResource('/pump-meter-record', PumpMeterRecordController::class);
-
-    Route::get('/user', function (Request $request) {
-        return $request->user();
-    });
 });
 
 Route::get('/ping', function () {

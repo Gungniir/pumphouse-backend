@@ -30,6 +30,12 @@ class Bill extends Model
 {
     use HasFactory;
 
+    public $fillable = [
+        'resident_id',
+        'period_id',
+        'amount_rub'
+    ];
+
     /**
      * Indicates if the model should be timestamped.
      *
