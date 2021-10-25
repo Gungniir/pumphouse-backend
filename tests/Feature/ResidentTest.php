@@ -12,7 +12,7 @@ class ResidentTest extends TestCase
     /**
      * A basic feature test example.
      */
-    public function test_insert()
+    public function test_store()
     {
         $admin = User::make([
             'login' => 'gungniir',
@@ -52,11 +52,11 @@ class ResidentTest extends TestCase
     }
 
     /**
-     * @depends test_insert
+     * @depends test_store
      * @param $data
      * @return array
      */
-    public function test_update_and_view($data)
+    public function test_update_and_show($data)
     {
         [$admin, $resident] = $data;
 
@@ -84,11 +84,11 @@ class ResidentTest extends TestCase
     }
 
     /**
-     * @depends test_insert
+     * @depends test_update_and_show
      * @param $data
      * @return array
      */
-    public function test_delete($data)
+    public function test_destroy($data)
     {
         [$admin, $resident] = $data;
 
@@ -104,7 +104,7 @@ class ResidentTest extends TestCase
     }
 
     /**
-     * @depends test_insert
+     * @depends test_store
      * @param $data
      * @return array
      */
@@ -118,6 +118,26 @@ class ResidentTest extends TestCase
         $response->assertOk();
 
         $response->assertJsonCount(50, 'data');
+
+        return [$admin, $resident];
+    }
+
+    /**
+     * @depends test_index
+     * @param $data
+     * @return array
+     */
+    public function test_delete_all($data) {
+        [$admin, $resident] = $data;
+
+        $residents = Resident::all();
+
+        foreach ($residents as $resident) {
+            $response = $this->actingAs($admin)->delete("/api/residents/{$resident->id}");
+            $response->assertOk();
+        }
+
+        $this->assertDatabaseCount('residents', 0);
 
         return [$admin, $resident];
     }
