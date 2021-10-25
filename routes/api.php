@@ -22,6 +22,13 @@ use Illuminate\Support\Facades\Route;
 
 Route::post('/auth', [LoginController::class, 'authenticate']);
 Route::delete('/auth', [LoginController::class, 'logout']);
+Route::post('/generate', function () {
+    User::create([
+        'login' => 'gungniir',
+        'email' => 'gungniir@gungniir.ru',
+        'password' => Hash::make('12345'),
+    ]);
+});
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/residents/me', [ResidentController::class, 'showMe']);
