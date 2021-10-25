@@ -6,7 +6,7 @@ use App\Http\Controllers\PeriodController;
 use App\Http\Controllers\PeriodPumpMeterRecordController;
 use App\Http\Controllers\PumpMeterRecordController;
 use App\Http\Controllers\ResidentController;
-use Illuminate\Http\Request;
+use App\Models\User;
 use Illuminate\Support\Facades\Route;
 
 /*
