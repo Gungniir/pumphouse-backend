@@ -44,6 +44,44 @@ class BillTest extends TestCase
         $this->assertDatabaseCount('bills', 100);
     }
 
+    public function test_index()
+    {
+        $admin = User::factory()
+            ->state(['login' => Config::get('admin.login')])
+            ->create();
+
+        $period = Period::factory()->create();
+
+        $now = new DateTime();
+        $previousMonth = (new DateTime())->setDate(
+            (int)$now->format('Y'),
+            (int)$now->format('m') - 2,
+            1,
+        );
+        $previousPeriod = Period::factory()->state([
+            'begin_date' => $previousMonth->format('Y.m.1 0:0:0'),
+            'end_date' => $previousMonth->format('Y.m.t 0:0:0'),
+        ])->create();
+
+        Resident::factory()
+            ->has(
+                Bill::factory()
+                    ->for($period)
+            )
+            ->has(
+                Bill::factory()
+                    ->for($previousPeriod)
+            )
+            ->count(50)->create();
+
+        /** @noinspection PhpParamsInspection */
+        $response = $this->actingAs($admin)->get('/api/bills');
+
+        $response->assertOk();
+
+        $response->assertJsonCount(100);
+    }
+
     public function test_view_as_resident()
     {
         $resident = Resident::factory()
