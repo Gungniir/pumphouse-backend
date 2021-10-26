@@ -82,6 +82,41 @@ class BillTest extends TestCase
         $response->assertJsonCount(100);
     }
 
+    public function test_index_as_resident()
+    {
+        $user = User::factory()
+            ->create();
+
+        $period = Period::factory()->create();
+
+        $now = new DateTime();
+        $previousMonth = (new DateTime())->setDate(
+            (int)$now->format('Y'),
+            (int)$now->format('m') - 2,
+            1,
+        );
+        $previousPeriod = Period::factory()->state([
+            'begin_date' => $previousMonth->format('Y.m.1 0:0:0'),
+            'end_date' => $previousMonth->format('Y.m.t 0:0:0'),
+        ])->create();
+
+        Resident::factory()
+            ->has(
+                Bill::factory()
+                    ->for($period)
+            )
+            ->has(
+                Bill::factory()
+                    ->for($previousPeriod)
+            )
+            ->count(50)->create();
+
+        /** @noinspection PhpParamsInspection */
+        $response = $this->actingAs($user)->get('/api/bills');
+
+        $response->assertForbidden();
+    }
+
     public function test_view_as_resident()
     {
         $resident = Resident::factory()
@@ -161,6 +196,24 @@ class BillTest extends TestCase
         ]);
     }
 
+    public function test_update_as_resident()
+    {
+        $user = User::factory()
+            ->create();
+
+        $bill = Bill::factory()
+            ->for(Resident::factory())
+            ->for(Period::factory())
+            ->create();
+
+        /** @noinspection PhpParamsInspection */
+        $response = $this->actingAs($user)->put("/api/bills/{$bill->id}", [
+            'amount_rub' => $bill->amount_rub * 2
+        ]);
+
+        $response->assertForbidden();
+    }
+
     public function test_insert()
     {
         $admin = User::factory()
@@ -208,6 +261,25 @@ class BillTest extends TestCase
         ]);
     }
 
+    public function test_insert_as_resident()
+    {
+        $user = User::factory()
+            ->create();
+
+        $bill = Bill::factory()
+            ->for(Resident::factory())
+            ->for(Period::factory())
+            ->make();
+
+        /** @noinspection PhpParamsInspection */
+        $response = $this->actingAs($user)->post("/api/periods/{$bill->period_id}/bills", [
+            'resident_id' => $bill->resident_id,
+            'amount_rub' => $bill->amount_rub
+        ]);
+
+        $response->assertForbidden();
+    }
+
     public function test_delete()
     {
         $admin = User::factory()
@@ -225,5 +297,21 @@ class BillTest extends TestCase
         $response->assertOk();
 
         $this->assertDatabaseCount('bills', 0);
+    }
+
+    public function test_delete_as_resident()
+    {
+        $user = User::factory()
+            ->create();
+
+        $bill = Bill::factory()
+            ->for(Resident::factory())
+            ->for(Period::factory())
+            ->create();
+
+        /** @noinspection PhpParamsInspection */
+        $response = $this->actingAs($user)->delete("/api/bills/{$bill->id}");
+
+        $response->assertForbidden();
     }
 }
