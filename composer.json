@@ -5,17 +5,15 @@
     "keywords": ["framework", "laravel"],
     "license": "MIT",
     "require": {
-        "php": "^7.3|^8.0",
+        "php": "^7.4|^8.0",
         "fruitcake/laravel-cors": "^2.0",
         "guzzlehttp/guzzle": "^7.0.1",
         "laravel/framework": "^8.65",
         "laravel/sanctum": "^2.12",
-        "laravel/tinker": "^2.5",
-      "ext-json": "*"
+        "laravel/tinker": "^2.5"
     },
     "require-dev": {
-        "roave/security-advisories": "dev-latest"
-        ,
+        "roave/security-advisories": "dev-latest",
         "barryvdh/laravel-ide-helper": "^2.10",
         "facade/ignition": "^2.5",
         "fakerphp/faker": "^1.9.1",

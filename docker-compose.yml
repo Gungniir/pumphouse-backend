@@ -1,0 +1,21 @@
+version: '3'
+
+services:
+    database:
+        image: 'postgres:latest'
+        hostname: 'postgres'
+        environment:
+            - POSTGRES_USER=pumphouse
+            - POSTGRES_PASSWORD=pumphouse
+            - POSTGRES_DB=pumphouse
+    backend:
+        image: 'pumphouse-backend:latest'
+        ports:
+            - '8000:8000'
+        environment:
+            - DB_CONNECTION=pgsql
+            - DB_HOST=postgres
+            - DB_PORT=5432
+            - DB_DATABASE=pumphouse
+            - DB_USERNAME=pumphouse
+            - DB_PASSWORD=pumphouse
