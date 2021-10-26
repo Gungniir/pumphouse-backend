@@ -6,6 +6,7 @@ use App\Models\Bill;
 use App\Models\Period;
 use App\Models\PumpMeterRecord;
 use App\Models\Resident;
+use App\Models\Tariff;
 use App\Models\User;
 use DateTime;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -159,7 +160,7 @@ class PeriodTest extends TestCase
             'login' => config('admin.login'),
         ])->make();
 
-        $response = $this->actingAs($admin)->getJson("/api/periods/{$period->id}");
+        $response = $this->actingAs($admin)->getJson("/api/periods/$period->id");
 
         $response->assertOk();
 
@@ -178,7 +179,7 @@ class PeriodTest extends TestCase
 
         $user = User::factory()->make();
 
-        $response = $this->actingAs($user)->getJson("/api/periods/{$period->id}");
+        $response = $this->actingAs($user)->getJson("/api/periods/$period->id");
 
         $response->assertForbidden();
     }
@@ -189,9 +190,10 @@ class PeriodTest extends TestCase
         $period = Period::factory()
             ->fromDate(2021, 9)
             ->has(PumpMeterRecord::factory()) // Сразу генерируем значение счетчика
+            ->has(Tariff::factory()) // Генерация тарифа
             ->create();
 
-        // Генарация дачников
+        // Генерация дачников
         Resident::factory()->count(50)->create();
 
 
@@ -199,14 +201,16 @@ class PeriodTest extends TestCase
             'login' => config('admin.login'),
         ])->make();
 
-        $response = $this->actingAs($admin)->postJson("/api/periods/{$period->id}/calculate");
+        $response = $this->actingAs($admin)->postJson("/api/periods/$period->id/calculate");
 
         $response->assertOk();
 
         $sum = Bill::sum('amount_rub');
 
-        // TODO: цену
-        $this->assertEquals($sum, $period->pumpMeterRecord->amount_volume*2);
+        $this->assertEquals(
+            number_format($sum, 2),
+            number_format($period->pumpMeterRecord->amount_volume * $period->tariff->cost, 2)
+        );
     }
 
     public function test_calculate_as_resident(): void
@@ -218,7 +222,7 @@ class PeriodTest extends TestCase
 
         $user = User::factory()->make();
 
-        $response = $this->actingAs($user)->postJson("/api/periods/{$period->id}/calculate");
+        $response = $this->actingAs($user)->postJson("/api/periods/$period->id/calculate");
 
         $response->assertForbidden();
     }

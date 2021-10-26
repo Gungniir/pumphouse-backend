@@ -8,6 +8,7 @@ use App\Models\Bill;
 use App\Models\Period;
 use App\Models\Resident;
 use DateTime;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\Response;
@@ -69,6 +70,7 @@ class PeriodController extends Controller
      *
      * @param Period $period
      * @return Application|Response|ResponseFactory
+     * @throws AuthorizationException
      */
     public function calculate(Period $period)
     {
@@ -78,12 +80,15 @@ class PeriodController extends Controller
             return response('You must put record first', 400); // Bad request
         }
 
+        if (is_null($period->tariff)) {
+            return response('You must put tariff first', 400); // Bad request
+        }
+
         if (count($period->bills) > 0) {
             return response('Bills is already generated', 409); // Conflict
         }
 
-        // TODO: Получение цены
-        $cost = 2;
+        $cost = $period->tariff->cost;
 
         $beginDate = new DateTime($period->begin_date);
         $endDate = new DateTime($period->end_date);
