@@ -6,6 +6,11 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Nette\Utils\DateTime;
 
+/**
+ * @property int $id
+ * @property string $begin_date
+ * @property string $end_date
+ */
 class PeriodResource extends JsonResource
 {
     /**

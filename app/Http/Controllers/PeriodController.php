@@ -9,9 +9,7 @@ use App\Models\Period;
 use App\Models\Resident;
 use DateTime;
 use Illuminate\Auth\Access\AuthorizationException;
-use Illuminate\Contracts\Foundation\Application;
-use Illuminate\Contracts\Routing\ResponseFactory;
-use Illuminate\Http\Response;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class PeriodController extends Controller
@@ -20,6 +18,7 @@ class PeriodController extends Controller
      * Display a listing of the resource.
      *
      * @return PeriodCollection
+     * @throws AuthorizationException
      */
     public function index(): PeriodCollection
     {
@@ -32,6 +31,7 @@ class PeriodController extends Controller
      *
      * @param Period $period
      * @return PeriodResource
+     * @throws AuthorizationException
      */
     public function show(Period $period): PeriodResource
     {
@@ -39,6 +39,11 @@ class PeriodController extends Controller
         return new PeriodResource($period);
     }
 
+    /**
+     * @param Request $request
+     * @return PeriodResource|JsonResponse
+     * @throws AuthorizationException
+     */
     public function create(Request $request)
     {
         $this->authorize('create', Period::class);
@@ -57,7 +62,7 @@ class PeriodController extends Controller
         $duplicate = Period::whereBeginDate($period->begin_date)->whereEndDate($period->end_date)->first();
 
         if (!is_null($duplicate)) {
-            return response("Duplicate found: {$duplicate->id}", 409);
+            return response()->json("Duplicate found: $duplicate->id", 409);
         }
 
         $period->save();
@@ -69,29 +74,30 @@ class PeriodController extends Controller
      * Calculate bills for period
      *
      * @param Period $period
-     * @return Application|Response|ResponseFactory
+     * @return JsonResponse
      * @throws AuthorizationException
      */
-    public function calculate(Period $period)
+    public function calculate(Period $period): JsonResponse
     {
         $this->authorize('calculate', Period::class);
 
         if (is_null($period->pumpMeterRecord)) {
-            return response('You must put record first', 400); // Bad request
+            return response()->json('You must put record first', 400); // Bad request
         }
 
         if (is_null($period->tariff)) {
-            return response('You must put tariff first', 400); // Bad request
+            return response()->json('You must put tariff first', 400); // Bad request
         }
 
         if (count($period->bills) > 0) {
-            return response('Bills is already generated', 409); // Conflict
+            return response()->json('Bills is already generated', 409); // Conflict
         }
 
         $cost = $period->tariff->cost;
 
         $beginDate = new DateTime($period->begin_date);
         $endDate = new DateTime($period->end_date);
+        /** @noinspection PhpCastIsUnnecessaryInspection */
         $amountVolume = (double)$period->pumpMeterRecord->amount_volume;
         $total = 0.;
         $result = [];
@@ -114,6 +120,8 @@ class PeriodController extends Controller
         }
 
         foreach ($result as $residentID => $piece) {
+            /** @noinspection PhpCastIsUnnecessaryInspection */
+            /** @noinspection UnnecessaryCastingInspection */
             Bill::create([
                 'resident_id' => $residentID,
                 'period_id' => $period->id,
@@ -121,6 +129,6 @@ class PeriodController extends Controller
             ]);
         }
 
-        return response('Success');
+        return response()->json('Success');
     }
 }

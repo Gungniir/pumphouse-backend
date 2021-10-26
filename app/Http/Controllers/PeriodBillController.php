@@ -6,10 +6,9 @@ use App\Http\Resources\BillResource;
 use App\Models\Bill;
 use App\Models\Period;
 use App\Models\Resident;
-use Illuminate\Contracts\Foundation\Application;
-use Illuminate\Contracts\Routing\ResponseFactory;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
+use Throwable;
 
 class PeriodBillController extends Controller
 {
@@ -35,7 +34,8 @@ class PeriodBillController extends Controller
      * Store a newly created resource in storage.
      *
      * @param Request $request
-     * @return Application|BillResource|Response|ResponseFactory
+     * @param Period $period
+     * @return BillResource|JsonResponse
      */
     public function store(Request $request, Period $period)
     {
@@ -47,7 +47,7 @@ class PeriodBillController extends Controller
         $resident = Resident::find($request->input('resident_id'));
 
         if (is_null($resident)) {
-            return response('Unknown resident', 404);
+            return response()->json('Unknown resident', 404);
         }
 
         $bill = Bill::make(['amount_rub' => $request->input('amount_rub')]);
@@ -75,9 +75,10 @@ class PeriodBillController extends Controller
      *
      * @param Request $request
      * @param Bill $bill
-     * @return Application|ResponseFactory|Response
+     * @return JsonResponse
+     * @throws Throwable
      */
-    public function update(Request $request, Bill $bill)
+    public function update(Request $request, Bill $bill): JsonResponse
     {
         $request->validate([
             'amount_rub' => 'required|numeric',
@@ -87,7 +88,7 @@ class PeriodBillController extends Controller
 
         $bill->saveOrFail();
 
-        return response('success');
+        return response()->json('success');
     }
 
     /**

@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * @method Period|Collection make($attributes = [], ?Model $parent = null)
+ * @method Period|Collection create($attributes = [], ?Model $parent = null)
  */
 class PeriodFactory extends Factory
 {

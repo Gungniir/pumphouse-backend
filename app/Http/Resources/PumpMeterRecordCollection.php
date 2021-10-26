@@ -14,6 +14,7 @@ class PumpMeterRecordCollection extends ResourceCollection
      *
      * @param  Request  $request
      * @return array|Arrayable|JsonSerializable
+     * @noinspection SenselessProxyMethodInspection
      */
     public function toArray($request)
     {

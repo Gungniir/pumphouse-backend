@@ -34,7 +34,7 @@ class ResidentTest extends TestCase
 
         $response = $this->actingAs($user)->getJson('/api/residents/me');
 
-        $this->assertEquals($response->content(), '"You are not a resident"');
+        $this->assertEquals('"You are not a resident"', $response->content());
 
         $response->assertNotFound();
     }
@@ -95,7 +95,7 @@ class ResidentTest extends TestCase
 
         $resident = Resident::factory()->create();
 
-        $response = $this->actingAs($admin)->putJson("/api/residents/{$resident->id}", [
+        $response = $this->actingAs($admin)->putJson("/api/residents/$resident->id", [
             'fio' => $resident->fio . ' Updated',
             'area' => number_format($resident->area * 10, 2),
             'start_date' => $resident->start_date->format('Y.m.d H:i:s'),
@@ -103,7 +103,7 @@ class ResidentTest extends TestCase
 
         $response->assertOk();
 
-        $response = $this->actingAs($admin)->get("/api/residents/{$resident->id}");
+        $response = $this->actingAs($admin)->get("/api/residents/$resident->id");
 
         $response->assertOk();
         $response->assertJson([
@@ -122,7 +122,7 @@ class ResidentTest extends TestCase
 
         $resident = Resident::factory()->create();
 
-        $response = $this->actingAs($user)->putJson("/api/residents/{$resident->id}", [
+        $response = $this->actingAs($user)->putJson("/api/residents/$resident->id", [
             'fio' => $resident->fio . ' Updated',
             'area' => number_format($resident->area * 10, 2),
             'start_date' => $resident->start_date->format('Y.m.d H:i:s'),
@@ -139,11 +139,11 @@ class ResidentTest extends TestCase
 
         $resident = Resident::factory()->create();
 
-        $response = $this->actingAs($admin)->deleteJson("/api/residents/{$resident->id}");
+        $response = $this->actingAs($admin)->deleteJson("/api/residents/$resident->id");
 
         $response->assertOk();
 
-        $response = $this->actingAs($admin)->getJson("/api/residents/{$resident->id}");
+        $response = $this->actingAs($admin)->getJson("/api/residents/$resident->id");
 
         $response->assertNotFound();
     }
@@ -154,7 +154,7 @@ class ResidentTest extends TestCase
 
         $resident = Resident::factory()->create();
 
-        $response = $this->actingAs($user)->deleteJson("/api/residents/{$resident->id}");
+        $response = $this->actingAs($user)->deleteJson("/api/residents/$resident->id");
 
         $response->assertForbidden();
     }

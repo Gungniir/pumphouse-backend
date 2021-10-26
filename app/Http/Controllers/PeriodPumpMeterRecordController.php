@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Resources\PumpMeterRecordResource;
 use App\Models\Period;
 use App\Models\PumpMeterRecord;
-use App\Models\Resident;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\Request;
@@ -20,6 +20,7 @@ class PeriodPumpMeterRecordController extends Controller
      *
      * @param Period $period
      * @return PumpMeterRecordResource
+     * @throws AuthorizationException
      */
     public function index(Period $period): PumpMeterRecordResource
     {
@@ -33,6 +34,7 @@ class PeriodPumpMeterRecordController extends Controller
      * @param Request $request
      * @param Period $period
      * @return Application|ResponseFactory|Response|PumpMeterRecordResource
+     * @throws AuthorizationException
      */
     public function store(Request $request, Period $period)
     {
@@ -58,6 +60,7 @@ class PeriodPumpMeterRecordController extends Controller
      * @param PumpMeterRecord $pumpMeterRecord
      * @return Application|ResponseFactory|Response
      * @throws Throwable
+     * @noinspection PhpUnusedParameterInspection
      */
     public function update(Request $request, Period $period, PumpMeterRecord $pumpMeterRecord)
     {
@@ -78,8 +81,11 @@ class PeriodPumpMeterRecordController extends Controller
     /**
      * Remove the specified resource from storage.
      *
+     * @param Period $period
      * @param PumpMeterRecord $pumpMeterRecord
      * @return string
+     * @throws AuthorizationException
+     * @noinspection PhpUnusedParameterInspection
      */
     public function destroy(Period $period, PumpMeterRecord $pumpMeterRecord): string
     {

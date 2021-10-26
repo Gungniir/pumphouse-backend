@@ -6,6 +6,12 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Nette\Utils\DateTime;
 
+/**
+ * @property int $id
+ * @property string $fio
+ * @property float $area
+ * @property string $start_date
+ */
 class ResidentResource extends JsonResource
 {
     /**
@@ -25,7 +31,7 @@ class ResidentResource extends JsonResource
         return [
             'id' => $this->id,
             'fio' => $this->fio,
-            'area' => (double)$this->area,
+            'area' => $this->area,
             'start_date' => $startDate->format('Y.m.d H:i:s'),
         ];
     }

@@ -45,7 +45,7 @@ class PumpMeterRecordTest extends TestCase
 
         $record = PumpMeterRecord::factory()->create();
 
-        $response = $this->actingAs($admin)->getJson("/api/pump-meter-records/{$record->id}");
+        $response = $this->actingAs($admin)->getJson("/api/pump-meter-records/$record->id");
 
         $response->assertOk();
 
@@ -65,7 +65,7 @@ class PumpMeterRecordTest extends TestCase
 
         $record = PumpMeterRecord::factory()->create();
 
-        $response = $this->actingAs($admin)->getJson("/api/pump-meter-records/{$record->id}");
+        $response = $this->actingAs($admin)->getJson("/api/pump-meter-records/$record->id");
 
         $response->assertForbidden();
     }
@@ -126,7 +126,7 @@ class PumpMeterRecordTest extends TestCase
 
         $record = PumpMeterRecord::factory()->create();
 
-        $response = $this->actingAs($admin)->getJson("/api/periods/{$record->period_id}/pump-meter-records");
+        $response = $this->actingAs($admin)->getJson("/api/periods/$record->period_id/pump-meter-records");
 
         $response->assertOk();
 
@@ -145,7 +145,7 @@ class PumpMeterRecordTest extends TestCase
 
         $record = PumpMeterRecord::factory()->create();
 
-        $response = $this->actingAs($admin)->getJson("/api/periods/{$record->period_id}/pump-meter-records");
+        $response = $this->actingAs($admin)->getJson("/api/periods/$record->period_id/pump-meter-records");
 
         $response->assertForbidden();
     }
@@ -158,13 +158,13 @@ class PumpMeterRecordTest extends TestCase
 
         $record = PumpMeterRecord::factory()->create();
 
-        $response = $this->actingAs($user)->patchJson("/api/periods/{$record->period_id}/pump-meter-records/{$record->id}", [
+        $response = $this->actingAs($user)->patchJson("/api/periods/$record->period_id/pump-meter-records/$record->id", [
             'amount_volume' => $record->amount_volume * 2,
         ]);
 
         $response->assertOk();
 
-        $response = $this->actingAs($user)->getJson("/api/periods/{$record->period_id}/pump-meter-records");
+        $response = $this->actingAs($user)->getJson("/api/periods/$record->period_id/pump-meter-records");
 
         $response->assertOk();
 
@@ -183,13 +183,13 @@ class PumpMeterRecordTest extends TestCase
 
         $record = PumpMeterRecord::factory()->create();
 
-        $response = $this->actingAs($user)->putJson("/api/periods/{$record->period_id}/pump-meter-records/{$record->id}", [
+        $response = $this->actingAs($user)->putJson("/api/periods/$record->period_id/pump-meter-records/$record->id", [
             'amount_volume' => $record->amount_volume * 2,
         ]);
 
         $response->assertForbidden();
 
-        $response = $this->actingAs($user)->getJson("/api/periods/{$record->period_id}/pump-meter-records");
+        $response = $this->actingAs($user)->getJson("/api/periods/$record->period_id/pump-meter-records");
 
         $response->assertForbidden();
     }
@@ -202,7 +202,7 @@ class PumpMeterRecordTest extends TestCase
 
         $record = PumpMeterRecord::factory()->make();
 
-        $response = $this->actingAs($admin)->postJson("/api/periods/{$record->period_id}/pump-meter-records", [
+        $response = $this->actingAs($admin)->postJson("/api/periods/$record->period_id/pump-meter-records", [
             'amount_volume' => $record->amount_volume
         ]);
 
@@ -227,7 +227,7 @@ class PumpMeterRecordTest extends TestCase
 
         $record = PumpMeterRecord::factory()->make();
 
-        $response = $this->actingAs($user)->postJson("/api/periods/{$record->period_id}/pump-meter-records", [
+        $response = $this->actingAs($user)->postJson("/api/periods/$record->period_id/pump-meter-records", [
             'amount_volume' => $record->amount_volume
         ]);
 
@@ -242,7 +242,7 @@ class PumpMeterRecordTest extends TestCase
 
         $record = PumpMeterRecord::factory()->create();
 
-        $response = $this->actingAs($admin)->deleteJson("/api/periods/{$record->period_id}/pump-meter-records/{$record->id}");
+        $response = $this->actingAs($admin)->deleteJson("/api/periods/$record->period_id/pump-meter-records/$record->id");
 
         $response->assertOk();
 
@@ -255,7 +255,7 @@ class PumpMeterRecordTest extends TestCase
 
         $record = PumpMeterRecord::factory()->create();
 
-        $response = $this->actingAs($user)->deleteJson("/api/periods/{$record->period_id}/pump-meter-records/{$record->id}");
+        $response = $this->actingAs($user)->deleteJson("/api/periods/$record->period_id/pump-meter-records/$record->id");
 
         $response->assertForbidden();
     }

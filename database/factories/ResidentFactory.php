@@ -3,8 +3,14 @@
 namespace Database\Factories;
 
 use App\Models\Resident;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @method Resident|Collection make($attributes = [], ?Model $parent = null)
+ * @method Resident|Collection create($attributes = [], ?Model $parent = null)
+ */
 class ResidentFactory extends Factory
 {
     /**

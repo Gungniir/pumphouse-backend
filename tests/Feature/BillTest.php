@@ -73,7 +73,6 @@ class BillTest extends TestCase
             )
             ->count(50)->create();
 
-        /** @noinspection PhpParamsInspection */
         $response = $this->actingAs($admin)->getJson('/api/bills');
 
         $response->assertOk();
@@ -110,7 +109,6 @@ class BillTest extends TestCase
             )
             ->count(50)->create();
 
-        /** @noinspection PhpParamsInspection */
         $response = $this->actingAs($user)->getJson('/api/bills');
 
         $response->assertForbidden();
@@ -127,7 +125,7 @@ class BillTest extends TestCase
             ->for(Period::factory())
             ->create();
 
-        $response = $this->actingAs($resident->user)->getJson("/api/bills/{$bill->id}");
+        $response = $this->actingAs($resident->user)->getJson("/api/bills/$bill->id");
 
         $response->assertOk();
 
@@ -151,8 +149,7 @@ class BillTest extends TestCase
             ->for(Period::factory())
             ->create();
 
-        /** @noinspection PhpParamsInspection */
-        $response = $this->actingAs($admin)->getJson("/api/bills/{$bill->id}");
+        $response = $this->actingAs($admin)->getJson("/api/bills/$bill->id");
 
         $response->assertOk();
 
@@ -176,15 +173,13 @@ class BillTest extends TestCase
             ->for(Period::factory())
             ->create();
 
-        /** @noinspection PhpParamsInspection */
-        $response = $this->actingAs($admin)->putJson("/api/bills/{$bill->id}", [
+        $response = $this->actingAs($admin)->putJson("/api/bills/$bill->id", [
             'amount_rub' => $bill->amount_rub * 2
         ]);
 
         $response->assertOk();
 
-        /** @noinspection PhpParamsInspection */
-        $response = $this->actingAs($admin)->getJson("/api/bills/{$bill->id}");
+        $response = $this->actingAs($admin)->getJson("/api/bills/$bill->id");
 
         $response->assertJson([
             'data' => [
@@ -205,8 +200,7 @@ class BillTest extends TestCase
             ->for(Period::factory())
             ->create();
 
-        /** @noinspection PhpParamsInspection */
-        $response = $this->actingAs($user)->putJson("/api/bills/{$bill->id}", [
+        $response = $this->actingAs($user)->putJson("/api/bills/$bill->id", [
             'amount_rub' => $bill->amount_rub * 2
         ]);
 
@@ -224,8 +218,7 @@ class BillTest extends TestCase
             ->for(Period::factory())
             ->make();
 
-        /** @noinspection PhpParamsInspection */
-        $response = $this->actingAs($admin)->postJson("/api/periods/{$bill->period_id}/bills", [
+        $response = $this->actingAs($admin)->postJson("/api/periods/$bill->period_id/bills", [
             'resident_id' => $bill->resident_id,
             'amount_rub' => $bill->amount_rub
         ]);
@@ -245,8 +238,7 @@ class BillTest extends TestCase
 
         $response->assertCreated();
 
-        /** @noinspection PhpParamsInspection */
-        $response = $this->actingAs($admin)->getJson("/api/bills/{$bill->id}");
+        $response = $this->actingAs($admin)->getJson("/api/bills/$bill->id");
 
         $response->assertOk();
 
@@ -270,8 +262,7 @@ class BillTest extends TestCase
             ->for(Period::factory())
             ->make();
 
-        /** @noinspection PhpParamsInspection */
-        $response = $this->actingAs($user)->postJson("/api/periods/{$bill->period_id}/bills", [
+        $response = $this->actingAs($user)->postJson("/api/periods/$bill->period_id/bills", [
             'resident_id' => $bill->resident_id,
             'amount_rub' => $bill->amount_rub
         ]);
@@ -290,8 +281,7 @@ class BillTest extends TestCase
             ->for(Period::factory())
             ->create();
 
-        /** @noinspection PhpParamsInspection */
-        $response = $this->actingAs($admin)->deleteJson("/api/bills/{$bill->id}");
+        $response = $this->actingAs($admin)->deleteJson("/api/bills/$bill->id");
 
         $response->assertOk();
 
@@ -308,8 +298,7 @@ class BillTest extends TestCase
             ->for(Period::factory())
             ->create();
 
-        /** @noinspection PhpParamsInspection */
-        $response = $this->actingAs($user)->deleteJson("/api/bills/{$bill->id}");
+        $response = $this->actingAs($user)->deleteJson("/api/bills/$bill->id");
 
         $response->assertForbidden();
     }

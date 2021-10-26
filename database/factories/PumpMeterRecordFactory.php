@@ -4,8 +4,14 @@ namespace Database\Factories;
 
 use App\Models\Period;
 use App\Models\PumpMeterRecord;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @method PumpMeterRecord|Collection make($attributes = [], ?Model $parent = null)
+ * @method PumpMeterRecord|Collection create($attributes = [], ?Model $parent = null)
+ */
 class PumpMeterRecordFactory extends Factory
 {
     /**

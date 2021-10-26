@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use Database\Factories\PeriodFactory;
-use DateTime;
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;

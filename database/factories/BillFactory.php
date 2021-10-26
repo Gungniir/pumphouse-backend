@@ -5,8 +5,14 @@ namespace Database\Factories;
 use App\Models\Bill;
 use App\Models\Period;
 use App\Models\Resident;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @method Bill|Collection make($attributes = [], ?Model $parent = null)
+ * @method Bill|Collection create($attributes = [], ?Model $parent = null)
+ */
 class BillFactory extends Factory
 {
     /**
