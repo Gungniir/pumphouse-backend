@@ -29,6 +29,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @property-read Collection|Bill[] $bills
  * @property-read int|null $bills_count
  * @property-read PumpMeterRecord|null $pumpMeterRecord
+ * @property-read Tariff|null $tariff
  */
 class Period extends Model
 {
@@ -49,5 +50,10 @@ class Period extends Model
     public function pumpMeterRecord(): HasOne
     {
         return $this->hasOne(PumpMeterRecord::class);
+    }
+
+    public function tariff(): HasOne
+    {
+        return $this->hasOne(Tariff::class);
     }
 }

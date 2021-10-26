@@ -4,9 +4,10 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\PeriodBillController;
 use App\Http\Controllers\PeriodController;
 use App\Http\Controllers\PeriodPumpMeterRecordController;
+use App\Http\Controllers\PeriodTariffController;
 use App\Http\Controllers\PumpMeterRecordController;
 use App\Http\Controllers\ResidentController;
-use App\Models\User;
+use App\Http\Controllers\TariffController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -32,6 +33,9 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::apiResource('periods.pump-meter-records', PeriodPumpMeterRecordController::class)->only('index', 'store', 'update', 'destroy');
     Route::apiResource('pump-meter-records', PumpMeterRecordController::class)->only(['index', 'show']);
+
+    Route::apiResource('periods.tariffs', PeriodTariffController::class)->only('index', 'store');
+    Route::apiResource('tariffs', TariffController::class)->only('update', 'destroy');
 
     Route::post('/periods/{period}/calculate', [PeriodController::class, 'calculate']);
     Route::post('/periods', [PeriodController::class, 'create']);
