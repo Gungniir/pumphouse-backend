@@ -11,6 +11,7 @@ use Illuminate\Support\Str;
 
 /**
  * @method User|Collection make($attributes = [], ?Model $parent = null)
+ * @method User|Collection create($attributes = [], ?Model $parent = null)
  */
 class UserFactory extends Factory
 {

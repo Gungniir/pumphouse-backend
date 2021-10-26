@@ -11,6 +11,34 @@ class ResidentTest extends TestCase
 {
     use RefreshDatabase;
 
+    public function test_get_me(): void
+    {
+        $resident = Resident::factory()->create();
+        $user = User::factory()->for($resident)->create();
+
+        $response = $this->actingAs($user)->getJson('/api/residents/me');
+
+        $response->assertOk();
+
+        $response->assertJson([
+            'data' => [
+                'id' => $resident->id,
+                'fio' => $resident->fio,
+                'start_date' => $resident->start_date->format('Y.m.d H:i:s'),
+            ],
+        ]);
+    }
+    public function test_get_me_as_not_a_resident(): void
+    {
+        $user = User::factory()->create();
+
+        $response = $this->actingAs($user)->getJson('/api/residents/me');
+
+        $this->assertEquals($response->content(), '"You are not a resident"');
+
+        $response->assertNotFound();
+    }
+
     public function test_store(): void
     {
         $admin = User::make([
