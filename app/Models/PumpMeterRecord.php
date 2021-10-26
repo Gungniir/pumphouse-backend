@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Database\Factories\PumpMeterRecordFactory;
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -22,6 +23,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static Builder|PumpMeterRecord wherePeriodId($value)
  * @mixin Eloquent
  * @property-read Period $period
+ * @method static PumpMeterRecordFactory factory(...$parameters)
  */
 class PumpMeterRecord extends Model
 {

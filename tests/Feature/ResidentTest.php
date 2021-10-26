@@ -11,10 +11,10 @@ class ResidentTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_store()
+    public function test_store(): void
     {
         $admin = User::make([
-            'login' => 'gungniir',
+            'login' => config('admin.login'),
         ]);
 
         $resident = Resident::factory()->make();
@@ -44,7 +44,7 @@ class ResidentTest extends TestCase
         ]);
     }
 
-    public function test_store_as_resident()
+    public function test_store_as_resident(): void
     {
         $user = User::factory()->make();
 
@@ -59,7 +59,7 @@ class ResidentTest extends TestCase
         $response->assertForbidden();
     }
 
-    public function test_update_and_show()
+    public function test_update_and_show(): void
     {
         $admin = User::make([
             'login' => config('admin.login'),
@@ -88,7 +88,7 @@ class ResidentTest extends TestCase
         ]);
     }
 
-    public function test_update_as_resident()
+    public function test_update_as_resident(): void
     {
         $user = User::factory()->make();
 
@@ -103,7 +103,7 @@ class ResidentTest extends TestCase
         $response->assertForbidden();
     }
 
-    public function test_destroy()
+    public function test_destroy(): void
     {
         $admin = User::make([
             'login' => config('admin.login'),
@@ -120,7 +120,7 @@ class ResidentTest extends TestCase
         $response->assertNotFound();
     }
 
-    public function test_destroy_as_resident()
+    public function test_destroy_as_resident(): void
     {
         $user = User::factory()->make();
 
@@ -131,7 +131,8 @@ class ResidentTest extends TestCase
         $response->assertForbidden();
     }
 
-    public function test_index() {
+    public function test_index(): void
+    {
         $admin = User::make([
             'login' => config('admin.login'),
         ]);
@@ -145,7 +146,8 @@ class ResidentTest extends TestCase
         $response->assertJsonCount(50, 'data');
     }
 
-    public function test_index_as_resident() {
+    public function test_index_as_resident(): void
+    {
         $user = User::factory()->make();
 
         Resident::factory()->count(50)->create();

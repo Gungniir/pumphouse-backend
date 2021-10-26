@@ -15,7 +15,7 @@ class PeriodTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_create()
+    public function test_create(): void
     {
         $now = new DateTime();
 
@@ -36,13 +36,13 @@ class PeriodTest extends TestCase
         $this->assertDatabaseCount('periods', 50);
     }
 
-    public function test_insert_as_admin()
+    public function test_insert_as_admin(): void
     {
         $admin = User::factory()->state([
             'login' => config('admin.login')
         ])->make();
 
-        $response = $this->actingAs($admin)->post('/api/periods', [
+        $response = $this->actingAs($admin)->postJson('/api/periods', [
             'year' => 2021,
             'month' => 10,
         ]);
@@ -67,7 +67,7 @@ class PeriodTest extends TestCase
         $this->assertDatabaseCount('periods', 1);
     }
 
-    public function test_insert_as_guest()
+    public function test_insert_as_guest(): void
     {
         $response = $this->postJson('/api/periods', [
             'year' => 2021,
@@ -77,7 +77,7 @@ class PeriodTest extends TestCase
         $response->assertUnauthorized();
     }
 
-    public function test_insert_as_resident()
+    public function test_insert_as_resident(): void
     {
         $user = User::make();
 
@@ -89,7 +89,7 @@ class PeriodTest extends TestCase
         $response->assertForbidden();
     }
 
-    public function test_insert_duplicate()
+    public function test_insert_duplicate(): void
     {
         $admin = User::factory()->state([
             'login' => config('admin.login')
@@ -97,7 +97,7 @@ class PeriodTest extends TestCase
 
         Period::factory()->fromDate(2021, 10)->create();
 
-        $response = $this->actingAs($admin)->post('/api/periods', [
+        $response = $this->actingAs($admin)->postJson('/api/periods', [
             'year' => 2021,
             'month' => 10,
         ]);
@@ -109,7 +109,7 @@ class PeriodTest extends TestCase
         $this->assertDatabaseCount('periods', 1);
     }
 
-    public function test_index_as_admin()
+    public function test_index_as_admin(): void
     {
         $now = new DateTime();
 
@@ -131,7 +131,7 @@ class PeriodTest extends TestCase
             'login' => config('admin.login'),
         ])->make();
 
-        $response = $this->actingAs($admin)->get('/api/periods');
+        $response = $this->actingAs($admin)->getJson('/api/periods');
 
         $response->assertOk();
 
@@ -142,16 +142,16 @@ class PeriodTest extends TestCase
         $response->assertJsonCount(50, 'data');
     }
 
-    public function test_index_as_resident()
+    public function test_index_as_resident(): void
     {
         $user = User::factory()->make();
 
-        $response = $this->actingAs($user)->get('/api/periods');
+        $response = $this->actingAs($user)->getJson('/api/periods');
 
         $response->assertForbidden();
     }
 
-    public function test_show()
+    public function test_show(): void
     {
         $period = Period::factory()->create();
 
@@ -159,7 +159,7 @@ class PeriodTest extends TestCase
             'login' => config('admin.login'),
         ])->make();
 
-        $response = $this->actingAs($admin)->get("/api/periods/{$period->id}");
+        $response = $this->actingAs($admin)->getJson("/api/periods/{$period->id}");
 
         $response->assertOk();
 
@@ -172,18 +172,18 @@ class PeriodTest extends TestCase
         ]);
     }
 
-    public function test_show_as_resident()
+    public function test_show_as_resident(): void
     {
         $period = Period::factory()->create();
 
         $user = User::factory()->make();
 
-        $response = $this->actingAs($user)->get("/api/periods/{$period->id}");
+        $response = $this->actingAs($user)->getJson("/api/periods/{$period->id}");
 
         $response->assertForbidden();
     }
 
-    public function test_calculate()
+    public function test_calculate(): void
     {
         // Генерация периода
         $period = Period::factory()
@@ -199,7 +199,7 @@ class PeriodTest extends TestCase
             'login' => config('admin.login'),
         ])->make();
 
-        $response = $this->actingAs($admin)->post("/api/periods/{$period->id}/calculate");
+        $response = $this->actingAs($admin)->postJson("/api/periods/{$period->id}/calculate");
 
         $response->assertOk();
 
@@ -209,7 +209,7 @@ class PeriodTest extends TestCase
         $this->assertEquals($sum, $period->pumpMeterRecord->amount_volume*2);
     }
 
-    public function test_calculate_as_resident()
+    public function test_calculate_as_resident(): void
     {
         $period = Period::factory()
             ->fromDate(2021, 9)
@@ -218,7 +218,7 @@ class PeriodTest extends TestCase
 
         $user = User::factory()->make();
 
-        $response = $this->actingAs($user)->post("/api/periods/{$period->id}/calculate");
+        $response = $this->actingAs($user)->postJson("/api/periods/{$period->id}/calculate");
 
         $response->assertForbidden();
     }

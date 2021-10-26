@@ -2,12 +2,9 @@
 
 namespace Tests\Feature;
 
-use App\Models\Bill;
 use App\Models\Period;
 use App\Models\PumpMeterRecord;
-use App\Models\Resident;
 use App\Models\User;
-use Config;
 use DateTime;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -16,7 +13,7 @@ class PumpMeterRecordTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_create()
+    public function test_create(): void
     {
         PumpMeterRecord::factory()->create();
 
@@ -40,16 +37,15 @@ class PumpMeterRecordTest extends TestCase
         $this->assertDatabaseCount('pump_meter_records', 2);
     }
 
-    public function test_view()
+    public function test_view(): void
     {
         $admin = User::factory()
-            ->state(['login' => Config::get('admin.login')])
+            ->state(['login' => config('admin.login')])
             ->make();
 
         $record = PumpMeterRecord::factory()->create();
 
-        /** @noinspection PhpParamsInspection */
-        $response = $this->actingAs($admin)->get("/api/pump-meter-records/{$record->id}");
+        $response = $this->actingAs($admin)->getJson("/api/pump-meter-records/{$record->id}");
 
         $response->assertOk();
 
@@ -62,23 +58,22 @@ class PumpMeterRecordTest extends TestCase
         ]);
     }
 
-    public function test_view_as_resident()
+    public function test_view_as_resident(): void
     {
         $admin = User::factory()
             ->make();
 
         $record = PumpMeterRecord::factory()->create();
 
-        /** @noinspection PhpParamsInspection */
-        $response = $this->actingAs($admin)->get("/api/pump-meter-records/{$record->id}");
+        $response = $this->actingAs($admin)->getJson("/api/pump-meter-records/{$record->id}");
 
         $response->assertForbidden();
     }
 
-    public function test_index()
+    public function test_index(): void
     {
         $admin = User::factory()
-            ->state(['login' => Config::get('admin.login')])
+            ->state(['login' => config('admin.login')])
             ->make();
 
         $record = PumpMeterRecord::factory()->create();
@@ -86,8 +81,7 @@ class PumpMeterRecordTest extends TestCase
             ->for(Period::factory()->fromDate(2021, 6))
             ->create();
 
-        /** @noinspection PhpParamsInspection */
-        $response = $this->actingAs($admin)->get("/api/pump-meter-records");
+        $response = $this->actingAs($admin)->getJson("/api/pump-meter-records");
 
         $response->assertOk();
 
@@ -109,7 +103,7 @@ class PumpMeterRecordTest extends TestCase
         ]);
     }
 
-    public function test_index_as_resident()
+    public function test_index_as_resident(): void
     {
         $admin = User::factory()
             ->make();
@@ -119,22 +113,20 @@ class PumpMeterRecordTest extends TestCase
             ->for(Period::factory()->fromDate(2021, 6))
             ->create();
 
-        /** @noinspection PhpParamsInspection */
-        $response = $this->actingAs($admin)->get("/api/pump-meter-records");
+        $response = $this->actingAs($admin)->getJson("/api/pump-meter-records");
 
         $response->assertForbidden();
     }
 
-    public function test_index_period()
+    public function test_index_period(): void
     {
         $admin = User::factory()
-            ->state(['login' => Config::get('admin.login')])
+            ->state(['login' => config('admin.login')])
             ->make();
 
         $record = PumpMeterRecord::factory()->create();
 
-        /** @noinspection PhpParamsInspection */
-        $response = $this->actingAs($admin)->get("/api/periods/{$record->period_id}/pump-meter-records");
+        $response = $this->actingAs($admin)->getJson("/api/periods/{$record->period_id}/pump-meter-records");
 
         $response->assertOk();
 
@@ -147,19 +139,18 @@ class PumpMeterRecordTest extends TestCase
         ]);
     }
 
-    public function test_index_period_as_resident()
+    public function test_index_period_as_resident(): void
     {
         $admin = User::factory()->make();
 
         $record = PumpMeterRecord::factory()->create();
 
-        /** @noinspection PhpParamsInspection */
-        $response = $this->actingAs($admin)->get("/api/periods/{$record->period_id}/pump-meter-records");
+        $response = $this->actingAs($admin)->getJson("/api/periods/{$record->period_id}/pump-meter-records");
 
         $response->assertForbidden();
     }
 
-    public function test_update_and_view_as_admin()
+    public function test_update_and_view_as_admin(): void
     {
         $user = User::factory()->state([
             'login' => config('admin.login')
@@ -173,8 +164,7 @@ class PumpMeterRecordTest extends TestCase
 
         $response->assertOk();
 
-        /** @noinspection PhpParamsInspection */
-        $response = $this->actingAs($user)->get("/api/periods/{$record->period_id}/pump-meter-records");
+        $response = $this->actingAs($user)->getJson("/api/periods/{$record->period_id}/pump-meter-records");
 
         $response->assertOk();
 
@@ -187,34 +177,32 @@ class PumpMeterRecordTest extends TestCase
         ]);
     }
 
-    public function test_update_and_view_as_resident()
+    public function test_update_and_view_as_resident(): void
     {
         $user = User::factory()->make();
 
         $record = PumpMeterRecord::factory()->create();
 
-        $response = $this->actingAs($user)->put("/api/periods/{$record->period_id}/pump-meter-records/{$record->id}", [
+        $response = $this->actingAs($user)->putJson("/api/periods/{$record->period_id}/pump-meter-records/{$record->id}", [
             'amount_volume' => $record->amount_volume * 2,
         ]);
 
         $response->assertForbidden();
 
-        /** @noinspection PhpParamsInspection */
-        $response = $this->actingAs($user)->get("/api/periods/{$record->period_id}/pump-meter-records");
+        $response = $this->actingAs($user)->getJson("/api/periods/{$record->period_id}/pump-meter-records");
 
         $response->assertForbidden();
     }
 
-    public function test_insert()
+    public function test_insert(): void
     {
         $admin = User::factory()
-            ->state(['login' => Config::get('admin.login')])
+            ->state(['login' => config('admin.login')])
             ->make();
 
         $record = PumpMeterRecord::factory()->make();
 
-        /** @noinspection PhpParamsInspection */
-        $response = $this->actingAs($admin)->post("/api/periods/{$record->period_id}/pump-meter-records", [
+        $response = $this->actingAs($admin)->postJson("/api/periods/{$record->period_id}/pump-meter-records", [
             'amount_volume' => $record->amount_volume
         ]);
 
@@ -233,44 +221,41 @@ class PumpMeterRecordTest extends TestCase
         ]);
     }
 
-    public function test_insert_as_resident()
+    public function test_insert_as_resident(): void
     {
         $user = User::factory()->make();
 
         $record = PumpMeterRecord::factory()->make();
 
-        /** @noinspection PhpParamsInspection */
-        $response = $this->actingAs($user)->post("/api/periods/{$record->period_id}/pump-meter-records", [
+        $response = $this->actingAs($user)->postJson("/api/periods/{$record->period_id}/pump-meter-records", [
             'amount_volume' => $record->amount_volume
         ]);
 
         $response->assertForbidden();
     }
 
-    public function test_delete()
+    public function test_delete(): void
     {
         $admin = User::factory()
-            ->state(['login' => Config::get('admin.login')])
-            ->create();
+            ->state(['login' => config('admin.login')])
+            ->make();
 
         $record = PumpMeterRecord::factory()->create();
 
-        /** @noinspection PhpParamsInspection */
-        $response = $this->actingAs($admin)->delete("/api/periods/{$record->period_id}/pump-meter-records/{$record->id}");
+        $response = $this->actingAs($admin)->deleteJson("/api/periods/{$record->period_id}/pump-meter-records/{$record->id}");
 
         $response->assertOk();
 
         $this->assertDatabaseCount('pump_meter_records', 0);
     }
 
-    public function test_delete_as_resident()
+    public function test_delete_as_resident(): void
     {
         $user = User::factory()->make();
 
         $record = PumpMeterRecord::factory()->create();
 
-        /** @noinspection PhpParamsInspection */
-        $response = $this->actingAs($user)->delete("/api/periods/{$record->period_id}/pump-meter-records/{$record->id}");
+        $response = $this->actingAs($user)->deleteJson("/api/periods/{$record->period_id}/pump-meter-records/{$record->id}");
 
         $response->assertForbidden();
     }

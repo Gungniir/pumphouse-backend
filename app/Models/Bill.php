@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Database\Factories\BillFactory;
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -25,6 +26,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @method static Builder|Bill whereResidentId($value)
  * @property-read Period $period
  * @property-read Resident $resident
+ * @method static BillFactory factory(...$parameters)
  */
 class Bill extends Model
 {

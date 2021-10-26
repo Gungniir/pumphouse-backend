@@ -6,7 +6,6 @@ use App\Models\Bill;
 use App\Models\Period;
 use App\Models\Resident;
 use App\Models\User;
-use Config;
 use DateTime;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -15,7 +14,7 @@ class BillTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_create()
+    public function test_create(): void
     {
         $period = Period::factory()->create();
 
@@ -44,10 +43,10 @@ class BillTest extends TestCase
         $this->assertDatabaseCount('bills', 100);
     }
 
-    public function test_index()
+    public function test_index(): void
     {
         $admin = User::factory()
-            ->state(['login' => Config::get('admin.login')])
+            ->state(['login' => config('admin.login')])
             ->create();
 
         $period = Period::factory()->create();
@@ -75,14 +74,14 @@ class BillTest extends TestCase
             ->count(50)->create();
 
         /** @noinspection PhpParamsInspection */
-        $response = $this->actingAs($admin)->get('/api/bills');
+        $response = $this->actingAs($admin)->getJson('/api/bills');
 
         $response->assertOk();
 
         $response->assertJsonCount(100);
     }
 
-    public function test_index_as_resident()
+    public function test_index_as_resident(): void
     {
         $user = User::factory()
             ->create();
@@ -112,12 +111,12 @@ class BillTest extends TestCase
             ->count(50)->create();
 
         /** @noinspection PhpParamsInspection */
-        $response = $this->actingAs($user)->get('/api/bills');
+        $response = $this->actingAs($user)->getJson('/api/bills');
 
         $response->assertForbidden();
     }
 
-    public function test_view_as_resident()
+    public function test_view_as_resident(): void
     {
         $resident = Resident::factory()
             ->has(User::factory())
@@ -128,7 +127,7 @@ class BillTest extends TestCase
             ->for(Period::factory())
             ->create();
 
-        $response = $this->actingAs($resident->user)->get("/api/bills/{$bill->id}");
+        $response = $this->actingAs($resident->user)->getJson("/api/bills/{$bill->id}");
 
         $response->assertOk();
 
@@ -141,10 +140,10 @@ class BillTest extends TestCase
         ]);
     }
 
-    public function test_view_as_admin()
+    public function test_view_as_admin(): void
     {
         $admin = User::factory()
-            ->state(['login' => Config::get('admin.login')])
+            ->state(['login' => config('admin.login')])
             ->create();
 
         $bill = Bill::factory()
@@ -153,7 +152,7 @@ class BillTest extends TestCase
             ->create();
 
         /** @noinspection PhpParamsInspection */
-        $response = $this->actingAs($admin)->get("/api/bills/{$bill->id}");
+        $response = $this->actingAs($admin)->getJson("/api/bills/{$bill->id}");
 
         $response->assertOk();
 
@@ -166,10 +165,10 @@ class BillTest extends TestCase
         ]);
     }
 
-    public function test_update_and_view()
+    public function test_update_and_view(): void
     {
         $admin = User::factory()
-            ->state(['login' => Config::get('admin.login')])
+            ->state(['login' => config('admin.login')])
             ->create();
 
         $bill = Bill::factory()
@@ -178,14 +177,14 @@ class BillTest extends TestCase
             ->create();
 
         /** @noinspection PhpParamsInspection */
-        $response = $this->actingAs($admin)->put("/api/bills/{$bill->id}", [
+        $response = $this->actingAs($admin)->putJson("/api/bills/{$bill->id}", [
             'amount_rub' => $bill->amount_rub * 2
         ]);
 
         $response->assertOk();
 
         /** @noinspection PhpParamsInspection */
-        $response = $this->actingAs($admin)->get("/api/bills/{$bill->id}");
+        $response = $this->actingAs($admin)->getJson("/api/bills/{$bill->id}");
 
         $response->assertJson([
             'data' => [
@@ -196,7 +195,7 @@ class BillTest extends TestCase
         ]);
     }
 
-    public function test_update_as_resident()
+    public function test_update_as_resident(): void
     {
         $user = User::factory()
             ->create();
@@ -207,17 +206,17 @@ class BillTest extends TestCase
             ->create();
 
         /** @noinspection PhpParamsInspection */
-        $response = $this->actingAs($user)->put("/api/bills/{$bill->id}", [
+        $response = $this->actingAs($user)->putJson("/api/bills/{$bill->id}", [
             'amount_rub' => $bill->amount_rub * 2
         ]);
 
         $response->assertForbidden();
     }
 
-    public function test_insert()
+    public function test_insert(): void
     {
         $admin = User::factory()
-            ->state(['login' => Config::get('admin.login')])
+            ->state(['login' => config('admin.login')])
             ->create();
 
         $bill = Bill::factory()
@@ -226,7 +225,7 @@ class BillTest extends TestCase
             ->make();
 
         /** @noinspection PhpParamsInspection */
-        $response = $this->actingAs($admin)->post("/api/periods/{$bill->period_id}/bills", [
+        $response = $this->actingAs($admin)->postJson("/api/periods/{$bill->period_id}/bills", [
             'resident_id' => $bill->resident_id,
             'amount_rub' => $bill->amount_rub
         ]);
@@ -247,7 +246,7 @@ class BillTest extends TestCase
         $response->assertCreated();
 
         /** @noinspection PhpParamsInspection */
-        $response = $this->actingAs($admin)->get("/api/bills/{$bill->id}");
+        $response = $this->actingAs($admin)->getJson("/api/bills/{$bill->id}");
 
         $response->assertOk();
 
@@ -261,7 +260,7 @@ class BillTest extends TestCase
         ]);
     }
 
-    public function test_insert_as_resident()
+    public function test_insert_as_resident(): void
     {
         $user = User::factory()
             ->create();
@@ -272,7 +271,7 @@ class BillTest extends TestCase
             ->make();
 
         /** @noinspection PhpParamsInspection */
-        $response = $this->actingAs($user)->post("/api/periods/{$bill->period_id}/bills", [
+        $response = $this->actingAs($user)->postJson("/api/periods/{$bill->period_id}/bills", [
             'resident_id' => $bill->resident_id,
             'amount_rub' => $bill->amount_rub
         ]);
@@ -280,10 +279,10 @@ class BillTest extends TestCase
         $response->assertForbidden();
     }
 
-    public function test_delete()
+    public function test_delete(): void
     {
         $admin = User::factory()
-            ->state(['login' => Config::get('admin.login')])
+            ->state(['login' => config('admin.login')])
             ->create();
 
         $bill = Bill::factory()
@@ -292,14 +291,14 @@ class BillTest extends TestCase
             ->create();
 
         /** @noinspection PhpParamsInspection */
-        $response = $this->actingAs($admin)->delete("/api/bills/{$bill->id}");
+        $response = $this->actingAs($admin)->deleteJson("/api/bills/{$bill->id}");
 
         $response->assertOk();
 
         $this->assertDatabaseCount('bills', 0);
     }
 
-    public function test_delete_as_resident()
+    public function test_delete_as_resident(): void
     {
         $user = User::factory()
             ->create();
@@ -310,7 +309,7 @@ class BillTest extends TestCase
             ->create();
 
         /** @noinspection PhpParamsInspection */
-        $response = $this->actingAs($user)->delete("/api/bills/{$bill->id}");
+        $response = $this->actingAs($user)->deleteJson("/api/bills/{$bill->id}");
 
         $response->assertForbidden();
     }
