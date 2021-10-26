@@ -9,9 +9,8 @@ use Tests\TestCase;
 
 class ResidentTest extends TestCase
 {
-    /**
-     * A basic feature test example.
-     */
+    use RefreshDatabase;
+
     public function test_store()
     {
         $admin = User::make([
@@ -20,15 +19,13 @@ class ResidentTest extends TestCase
 
         $resident = Resident::factory()->make();
 
-        $response = $this->actingAs($admin)->post('/api/residents', [
+        $response = $this->actingAs($admin)->postJson('/api/residents', [
             'fio' => $resident->fio,
             'area' => $resident->area,
             'start_date' => $resident->start_date->format('Y.m.d H:i:s'),
-        ], [
-            'Accept' => 'application/json'
         ]);
 
-        $response->assertStatus(201);
+        $response->assertCreated();
 
         $response->assertJsonStructure([
             'data' => [
@@ -45,32 +42,42 @@ class ResidentTest extends TestCase
                 'start_date' => $resident->start_date->format('Y.m.d H:i:s'),
             ],
         ]);
-
-        $resident->id = $response->json('data.id');
-
-        return [$admin, $resident];
     }
 
-    /**
-     * @depends test_store
-     * @param $data
-     * @return array
-     */
-    public function test_update_and_show($data)
+    public function test_store_as_resident()
     {
-        [$admin, $resident] = $data;
+        $user = User::factory()->make();
 
-        $response = $this->actingAs($admin)->put("/api/residents/{$resident->id}", [
+        $resident = Resident::factory()->make();
+
+        $response = $this->actingAs($user)->postJson('/api/residents', [
+            'fio' => $resident->fio,
+            'area' => $resident->area,
+            'start_date' => $resident->start_date->format('Y.m.d H:i:s'),
+        ]);
+
+        $response->assertForbidden();
+    }
+
+    public function test_update_and_show()
+    {
+        $admin = User::make([
+            'login' => config('admin.login'),
+        ]);
+
+        $resident = Resident::factory()->create();
+
+        $response = $this->actingAs($admin)->putJson("/api/residents/{$resident->id}", [
             'fio' => $resident->fio . ' Updated',
             'area' => number_format($resident->area * 10, 2),
             'start_date' => $resident->start_date->format('Y.m.d H:i:s'),
         ]);
 
-        $response->assertStatus(200);
+        $response->assertOk();
 
         $response = $this->actingAs($admin)->get("/api/residents/{$resident->id}");
 
-        $response->assertStatus(200);
+        $response->assertOk();
         $response->assertJson([
             'data' => [
                 'id' => $resident->id,
@@ -79,66 +86,72 @@ class ResidentTest extends TestCase
                 'start_date' => $resident->start_date->format('Y.m.d H:i:s'),
             ],
         ]);
-
-        return [$admin, $resident];
     }
 
-    /**
-     * @depends test_update_and_show
-     * @param $data
-     * @return array
-     */
-    public function test_destroy($data)
+    public function test_update_as_resident()
     {
-        [$admin, $resident] = $data;
+        $user = User::factory()->make();
 
-        $response = $this->actingAs($admin)->delete("/api/residents/{$resident->id}");
+        $resident = Resident::factory()->create();
 
-        $response->assertStatus(200);
+        $response = $this->actingAs($user)->putJson("/api/residents/{$resident->id}", [
+            'fio' => $resident->fio . ' Updated',
+            'area' => number_format($resident->area * 10, 2),
+            'start_date' => $resident->start_date->format('Y.m.d H:i:s'),
+        ]);
 
-        $response = $this->actingAs($admin)->get("/api/residents/{$resident->id}");
-
-        $response->assertStatus(404);
-
-        return [$admin, $resident];
+        $response->assertForbidden();
     }
 
-    /**
-     * @depends test_store
-     * @param $data
-     * @return array
-     */
-    public function test_index($data) {
-        [$admin, $resident] = $data;
+    public function test_destroy()
+    {
+        $admin = User::make([
+            'login' => config('admin.login'),
+        ]);
+
+        $resident = Resident::factory()->create();
+
+        $response = $this->actingAs($admin)->deleteJson("/api/residents/{$resident->id}");
+
+        $response->assertOk();
+
+        $response = $this->actingAs($admin)->getJson("/api/residents/{$resident->id}");
+
+        $response->assertNotFound();
+    }
+
+    public function test_destroy_as_resident()
+    {
+        $user = User::factory()->make();
+
+        $resident = Resident::factory()->create();
+
+        $response = $this->actingAs($user)->deleteJson("/api/residents/{$resident->id}");
+
+        $response->assertForbidden();
+    }
+
+    public function test_index() {
+        $admin = User::make([
+            'login' => config('admin.login'),
+        ]);
 
         Resident::factory()->count(50)->create();
 
-        $response = $this->actingAs($admin)->get("/api/residents");
+        $response = $this->actingAs($admin)->getJson("/api/residents");
 
         $response->assertOk();
 
         $response->assertJsonCount(50, 'data');
-
-        return [$admin, $resident];
     }
 
-    /**
-     * @depends test_index
-     * @param $data
-     * @return array
-     */
-    public function test_delete_all($data) {
-        [$admin, $resident] = $data;
+    public function test_index_as_resident() {
+        $user = User::factory()->make();
 
-        $residents = Resident::all();
+        Resident::factory()->count(50)->create();
 
-        foreach ($residents as $resident) {
-            $response = $this->actingAs($admin)->delete("/api/residents/{$resident->id}");
-            $response->assertOk();
-        }
+        $response = $this->actingAs($user)->getJson("/api/residents");
 
-        $this->assertDatabaseCount('residents', 0);
-
-        return [$admin, $resident];
+        $response->assertForbidden();
     }
 }
