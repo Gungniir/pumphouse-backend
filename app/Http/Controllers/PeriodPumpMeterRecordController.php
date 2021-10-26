@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Resources\PumpMeterRecordResource;
 use App\Models\Period;
 use App\Models\PumpMeterRecord;
+use App\Models\Resident;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\Request;
@@ -13,6 +14,7 @@ use Throwable;
 
 class PeriodPumpMeterRecordController extends Controller
 {
+
     /**
      * Display a listing of the resource.
      *
@@ -21,6 +23,7 @@ class PeriodPumpMeterRecordController extends Controller
      */
     public function index(Period $period): PumpMeterRecordResource
     {
+        $this->authorize('viewAny', PumpMeterRecord::class);
         return new PumpMeterRecordResource($period->pumpMeterRecord);
     }
 
@@ -33,6 +36,7 @@ class PeriodPumpMeterRecordController extends Controller
      */
     public function store(Request $request, Period $period)
     {
+        $this->authorize('create', PumpMeterRecord::class);
         $request->validate([
             'amount_volume' => 'required|numeric',
         ]);
@@ -57,6 +61,7 @@ class PeriodPumpMeterRecordController extends Controller
      */
     public function update(Request $request, Period $period, PumpMeterRecord $pumpMeterRecord)
     {
+        $this->authorize('update', $pumpMeterRecord);
         // Если убрать $period из параметров, то laravel не будет искать $pumpMeterRecord
 
         $request->validate([
@@ -78,6 +83,7 @@ class PeriodPumpMeterRecordController extends Controller
      */
     public function destroy(Period $period, PumpMeterRecord $pumpMeterRecord): string
     {
+        $this->authorize('forceDelete', $pumpMeterRecord);
         // Если убрать $period из параметров, то laravel не будет искать $pumpMeterRecord
         $pumpMeterRecord->forceDelete();
 
