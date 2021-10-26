@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Database\Factories\PeriodFactory;
 use DateTime;
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
@@ -17,6 +18,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @property int $id
  * @property string $begin_date
  * @property string $end_date
+ * @method static PeriodFactory factory(...$parameters)
  * @method static Builder|Period newModelQuery()
  * @method static Builder|Period newQuery()
  * @method static Builder|Period query()

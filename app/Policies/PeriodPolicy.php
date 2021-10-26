@@ -41,4 +41,14 @@ class PeriodPolicy
     {
         return false;
     }
+
+    public function create(): bool
+    {
+        return false;
+    }
+
+    public function calculate(): bool
+    {
+        return false;
+    }
 }

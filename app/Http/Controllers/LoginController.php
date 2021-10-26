@@ -2,15 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
-use Database\Factories\UserFactory;
-use Illuminate\Contracts\Auth\Authenticatable;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Redirect;
-use Illuminate\Testing\Fluent\Concerns\Has;
 
 class LoginController extends Controller
 {

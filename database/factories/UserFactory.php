@@ -4,9 +4,14 @@ namespace Database\Factories;
 
 use App\Models\User;
 use Hash;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
+/**
+ * @method User|Collection make($attributes = [], ?Model $parent = null)
+ */
 class UserFactory extends Factory
 {
     /**

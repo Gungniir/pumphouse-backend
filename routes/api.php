@@ -40,7 +40,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('periods.pump-meter-records', PeriodPumpMeterRecordController::class)->except('show');
     Route::apiResource('pump-meter-records', PumpMeterRecordController::class)->only(['index', 'show', 'update', 'delete']);
 
-    Route::post('/period/{period}/calculate', [PeriodController::class, 'calculate']);
+    Route::post('/periods/{period}/calculate', [PeriodController::class, 'calculate']);
+    Route::post('/periods', [PeriodController::class, 'create']);
     Route::apiResource('/periods', PeriodController::class)->only(['index', 'show']);
 });
 
