@@ -1,16 +1,24 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
+<p align="center"><img src="https://github.com/Gungniir/pumphouse-backend/blob/57b34bf7874c6f0b15bf944c980db96ac3f52268/public/Logo.png" width="400" alt="Логотип"></p>
 
-## About Laravel
+## Система Водокачка+ (Backend)
+Данная система была разработана в качестве тестового задания.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Порядок запуска
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+### Настройка
+В файле .env нужно установить ADMIN_LOGIN и ADMIN_PASSWORD. Эти данные будут
+использованы при создании аккаунта администратора.
+
+###Запуск
+
+```shell 
+docker-compose up -d # Запуск контейнеров pgsql и backend
+docker-compose exec backend php artisan migrate --force # Создание таблиц в базе данных
+
+docker-compose exec backend php artisan bd:seed # Создание аккаунта администратора и случайных резидентов
+# ИЛИ
+docker-compose exec backend php artisan bd:seed --class AdminSeeder # Создание только аккаунта администратора
+```
 
 ## License
 
