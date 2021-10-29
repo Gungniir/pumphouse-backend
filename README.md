@@ -6,18 +6,21 @@
 ## Порядок запуска
 
 ### Настройка
+Нужно скопировать .env.example в .env
+
 В файле .env нужно установить ADMIN_LOGIN и ADMIN_PASSWORD. Эти данные будут
 использованы при создании аккаунта администратора.
 
+А также сгенерировать случайную строку и установить её в APP_KEY.
 ### Запуск
 
 ```shell 
 docker-compose up -d # Запуск контейнеров pgsql и backend
 docker-compose exec backend php artisan migrate --force # Создание таблиц в базе данных
 
-docker-compose exec backend php artisan bd:seed # Создание аккаунта администратора и случайных резидентов
+docker-compose exec backend php artisan db:seed # Создание аккаунта администратора и случайных резидентов
 # ИЛИ
-docker-compose exec backend php artisan bd:seed --class AdminSeeder # Создание только аккаунта администратора
+docker-compose exec backend php artisan db:seed --class AdminSeeder # Создание только аккаунта администратора
 ```
 
 ## License
