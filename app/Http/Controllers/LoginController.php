@@ -26,7 +26,7 @@ class LoginController extends Controller
             return sprintf('You are successfully authenticated as "%s"', Auth::user()->login);
         }
 
-        return 'Bad login or password';
+        return response('Bad login or password', 404);
     }
 
     /**
