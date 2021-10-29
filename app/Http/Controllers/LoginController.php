@@ -11,9 +11,8 @@ class LoginController extends Controller
      * Handle an authentication attempt.
      *
      * @param Request $request
-     * @return string
      */
-    public function authenticate(Request $request): string
+    public function authenticate(Request $request)
     {
         $credentials = $request->validate([
             'login' => ['required'],
@@ -26,7 +25,7 @@ class LoginController extends Controller
             return sprintf('You are successfully authenticated as "%s"', Auth::user()->login);
         }
 
-        return response('Bad login or password', 404);
+        return response('Bad login or password.', 404);
     }
 
     /**
