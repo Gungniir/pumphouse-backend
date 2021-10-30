@@ -30,7 +30,7 @@ class ResidentFactory extends Factory
         return [
             'fio' => $this->faker->lastName . ' ' . $this->faker->firstName,
             'area' => $this->faker->randomFloat(2, 10, 100),
-            'start_date' => $this->faker->dateTimeBetween('-2 months')
+            'start_date' => $this->faker->dateTimeBetween('-15 months')
         ];
     }
 }

@@ -4,7 +4,7 @@
 .idea
 
 ### Laravel template
-/vendor/
+vendor/
 
 .env
 .env.example

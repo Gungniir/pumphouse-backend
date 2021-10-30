@@ -16,7 +16,7 @@ class ResidentSeeder extends Seeder
      */
     final public function run(): void
     {
-        Resident::factory()->count(50)->create();
+        Resident::factory()->count(400)->create();
         Resident::factory()
             ->has(User::factory())
             ->count(50)->create();
