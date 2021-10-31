@@ -8,6 +8,7 @@ use App\Models\PumpMeterRecord;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\Routing\ResponseFactory;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Throwable;
@@ -19,12 +20,17 @@ class PeriodPumpMeterRecordController extends Controller
      * Display a listing of the resource.
      *
      * @param Period $period
-     * @return PumpMeterRecordResource
+     * @return PumpMeterRecordResource|JsonResponse
      * @throws AuthorizationException
      */
-    public function index(Period $period): PumpMeterRecordResource
+    public function index(Period $period)
     {
         $this->authorize('viewAny', PumpMeterRecord::class);
+
+        if (is_null($period->pumpMeterRecord)) {
+            return response()->json("Not found", 404);
+        }
+
         return new PumpMeterRecordResource($period->pumpMeterRecord);
     }
 
