@@ -18,7 +18,7 @@ class PeriodSeeder extends Seeder
     {
         for ($i = 0; $i < 14; $i++) {
             Period::factory()
-                ->fromDate(2021, $i - 4)
+                ->fromDate(2021, $i - 3)
                 ->has(PumpMeterRecord::factory())
                 ->has(Tariff::factory())
                 ->create();

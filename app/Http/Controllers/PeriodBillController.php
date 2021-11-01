@@ -2,32 +2,25 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\BillCollection;
 use App\Http\Resources\BillResource;
 use App\Models\Bill;
 use App\Models\Period;
 use App\Models\Resident;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Throwable;
 
 class PeriodBillController extends Controller
 {
     /**
-     * Create the controller instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        $this->authorizeResource(Bill::class, 'bill');
-    }
-
-    /**
      * Display a listing of the resource.
+     * @throws AuthorizationException
      */
-    public function index()
+    public function index(Period $period): BillCollection
     {
-        return Bill::all();
+        $this->authorize('viewAny', Bill::class);
+        return new BillCollection($period->bills);
     }
 
     /**
@@ -36,9 +29,12 @@ class PeriodBillController extends Controller
      * @param Request $request
      * @param Period $period
      * @return BillResource|JsonResponse
+     * @throws AuthorizationException
      */
     public function store(Request $request, Period $period)
     {
+        $this->authorize('update', Bill::class);
+
         $request->validate([
             'resident_id' => 'required|integer',
             'amount_rub' => 'required|numeric',
@@ -57,48 +53,5 @@ class PeriodBillController extends Controller
             $bill
         ));
 
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param Bill $bill
-     * @return BillResource
-     */
-    public function show(Bill $bill): BillResource
-    {
-        return new BillResource($bill);
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param Request $request
-     * @param Bill $bill
-     * @return JsonResponse
-     * @throws Throwable
-     */
-    public function update(Request $request, Bill $bill): JsonResponse
-    {
-        $request->validate([
-            'amount_rub' => 'required|numeric',
-        ]);
-
-        $bill->amount_rub = number_format($request->input('amount_rub'), 2, '.', '');
-
-        $bill->saveOrFail();
-
-        return response()->json('success');
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param Bill $bill
-     * @return bool
-     */
-    public function destroy(Bill $bill): bool
-    {
-        return $bill->forceDelete();
     }
 }

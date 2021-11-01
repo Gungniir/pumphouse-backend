@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\BillController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\PeriodBillController;
 use App\Http\Controllers\PeriodController;
@@ -28,8 +29,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/residents/me', [ResidentController::class, 'showMe']);
     Route::apiResource('/residents', ResidentController::class);
 
-    Route::get('bills', [PeriodBillController::class, 'index']);
-    Route::apiResource('periods.bills', PeriodBillController::class)->shallow();
+    Route::apiResource('bills', BillController::class)->only('index', 'update', 'destroy', 'show');
+    Route::apiResource('periods.bills', PeriodBillController::class)->only('index', 'store');
 
     Route::apiResource('periods.pump-meter-records', PeriodPumpMeterRecordController::class)->only('index', 'store', 'update', 'destroy');
     Route::apiResource('pump-meter-records', PumpMeterRecordController::class)->only(['index', 'show']);

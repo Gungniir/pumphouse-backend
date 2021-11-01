@@ -114,7 +114,78 @@ class BillTest extends TestCase
         $response->assertForbidden();
     }
 
-    public function test_view_as_resident(): void
+    public function test_index_period(): void
+    {
+        $admin = User::factory()
+            ->state(['login' => config('admin.login')])
+            ->make();
+
+        $period = Period::factory()->create();
+
+        $now = new DateTime();
+        $previousMonth = (new DateTime())->setDate(
+            (int)$now->format('Y'),
+            (int)$now->format('m') - 2,
+            1,
+        );
+        $previousPeriod = Period::factory()->state([
+            'begin_date' => $previousMonth->format('Y.m.1 0:0:0'),
+            'end_date' => $previousMonth->format('Y.m.t 0:0:0'),
+        ])->create();
+
+        Resident::factory()
+            ->has(
+                Bill::factory()
+                    ->for($period)
+            )
+            ->has(
+                Bill::factory()
+                    ->for($previousPeriod)
+            )
+            ->count(50)->create();
+
+        $response = $this->actingAs($admin)->getJson("/api/periods/$period->id/bills");
+
+        $response->assertOk();
+
+        $response->assertJsonCount(50, 'data');
+    }
+
+    public function test_index_period_as_resident(): void
+    {
+        $admin = User::factory()
+            ->make();
+
+        $period = Period::factory()->create();
+
+        $now = new DateTime();
+        $previousMonth = (new DateTime())->setDate(
+            (int)$now->format('Y'),
+            (int)$now->format('m') - 2,
+            1,
+        );
+        $previousPeriod = Period::factory()->state([
+            'begin_date' => $previousMonth->format('Y.m.1 0:0:0'),
+            'end_date' => $previousMonth->format('Y.m.t 0:0:0'),
+        ])->create();
+
+        Resident::factory()
+            ->has(
+                Bill::factory()
+                    ->for($period)
+            )
+            ->has(
+                Bill::factory()
+                    ->for($previousPeriod)
+            )
+            ->count(50)->create();
+
+        $response = $this->actingAs($admin)->getJson("/api/periods/$period->id/bills");
+
+        $response->assertForbidden();
+    }
+
+    public function test_view_as_resident_owner(): void
     {
         $resident = Resident::factory()
             ->has(User::factory())
@@ -136,6 +207,22 @@ class BillTest extends TestCase
                 'amount_rub' => $bill->amount_rub
             ]
         ]);
+    }
+
+    public function test_view_as_resident_guest(): void
+    {
+        $resident = Resident::factory()
+            ->has(User::factory())
+            ->create();
+
+        $bill = Bill::factory()
+            ->for(Resident::factory())
+            ->for(Period::factory())
+            ->create();
+
+        $response = $this->actingAs($resident->user)->getJson("/api/bills/$bill->id");
+
+        $response->assertForbidden();
     }
 
     public function test_view_as_admin(): void
@@ -162,7 +249,7 @@ class BillTest extends TestCase
         ]);
     }
 
-    public function test_update_and_view(): void
+    public function test_update(): void
     {
         $admin = User::factory()
             ->state(['login' => config('admin.login')])
@@ -179,10 +266,9 @@ class BillTest extends TestCase
 
         $response->assertOk();
 
-        $response = $this->actingAs($admin)->getJson("/api/bills/$bill->id");
-
         $response->assertJson([
             'data' => [
+                'id' => $bill->id,
                 'resident_id' => $bill->resident_id,
                 'period_id' => $bill->period_id,
                 'amount_rub' => $bill->amount_rub * 2
