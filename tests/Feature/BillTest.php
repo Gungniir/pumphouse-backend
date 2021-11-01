@@ -151,6 +151,23 @@ class BillTest extends TestCase
         $response->assertJsonCount(50, 'data');
     }
 
+    public function test_index_period_empty(): void
+    {
+        $admin = User::factory()
+            ->state(['login' => config('admin.login')])
+            ->make();
+
+        $period = Period::factory()->create();
+
+        $response = $this->actingAs($admin)->getJson("/api/periods/$period->id/bills");
+
+        $response->assertOk();
+
+        $response->dump();
+
+        $response->assertJsonCount(0, 'data');
+    }
+
     public function test_index_period_as_resident(): void
     {
         $admin = User::factory()

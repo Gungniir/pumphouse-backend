@@ -17,9 +17,16 @@ class PeriodBillController extends Controller
      * Display a listing of the resource.
      * @throws AuthorizationException
      */
-    public function index(Period $period): BillCollection
+    public function index(Period $period)
     {
         $this->authorize('viewAny', Bill::class);
+
+        if ($period->bills()->count() === 0) {
+            return response()->json([
+                'data' => []
+            ]);
+        }
+
         return new BillCollection($period->bills);
     }
 
