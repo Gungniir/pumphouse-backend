@@ -31,6 +31,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::apiResource('bills', BillController::class)->only('index', 'update', 'destroy', 'show');
     Route::apiResource('periods.bills', PeriodBillController::class)->only('index', 'store');
+    Route::delete('/periods/{period}/bills', [PeriodBillController::class, 'destroyAll']);
 
     Route::apiResource('periods.pump-meter-records', PeriodPumpMeterRecordController::class)->only('index', 'store', 'update', 'destroy');
     Route::apiResource('pump-meter-records', PumpMeterRecordController::class)->only(['index', 'show']);

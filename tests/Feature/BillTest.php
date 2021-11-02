@@ -163,8 +163,6 @@ class BillTest extends TestCase
 
         $response->assertOk();
 
-        $response->dump();
-
         $response->assertJsonCount(0, 'data');
     }
 
@@ -402,6 +400,49 @@ class BillTest extends TestCase
             ->create();
 
         $response = $this->actingAs($user)->deleteJson("/api/bills/$bill->id");
+
+        $response->assertForbidden();
+    }
+
+    public function test_delete_all_period(): void
+    {
+        $admin = User::factory()
+            ->state(['login' => config('admin.login')])
+            ->create();
+
+        $period = Period::factory()->create();
+
+        $residents = Resident::factory()
+            ->has(
+                Bill::factory()
+                    ->for($period)
+            )
+            ->count(50)
+            ->create();
+
+        $response = $this->actingAs($admin)->deleteJson("/api/periods/$period->id/bills");
+
+        $response->assertOk();
+
+        $this->assertDatabaseCount('bills', 0);
+    }
+
+    public function test_delete_all_period_as_resident(): void
+    {
+        $user = User::factory()
+            ->create();
+
+        $period = Period::factory()->create();
+
+        $residents = Resident::factory()
+            ->has(
+                Bill::factory()
+                    ->for($period)
+            )
+            ->count(50)
+            ->create();
+
+        $response = $this->actingAs($user)->deleteJson("/api/periods/$period->id/bills");
 
         $response->assertForbidden();
     }

@@ -61,4 +61,20 @@ class PeriodBillController extends Controller
         ));
 
     }
+
+    /**
+     * Remove all bills in period.
+     *
+     * @param Period $period
+     * @return JsonResponse
+     * @throws AuthorizationException
+     */
+    public function destroyAll(Period $period): JsonResponse
+    {
+        $this->authorize('forceDelete', Bill::class);
+
+        $period->bills()->delete();
+
+        return response()->json('success');
+    }
 }
